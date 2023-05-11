@@ -5,7 +5,6 @@
  *      Author: jhhwang
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,17 +17,16 @@
 
 #define BUFSIZE (100)
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
 	int sock = 0;
-	char message[BUFSIZE] = {0};
+	char message[BUFSIZE] = { 0 };
 	int str_len = 0;
 
-	struct sockaddr_in serv_addr = {0};
+	struct sockaddr_in serv_addr = { 0 };
 
-	if(argc != 3)
-	{
-		printf("Usage : %s <ip> <port> \n",argv[0]);
+	if (argc != 3) {
+		printf("Usage : %s <ip> <port> \n", argv[0]);
 		exit(1);
 	}
 
@@ -39,20 +37,23 @@ int main(int argc, char ** argv)
 	serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
 	serv_addr.sin_port = htons(atoi(argv[2]));
 
-	if( connect(sock,(struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1){
+	if (connect(sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
 		error_handling("connect error");
 	}
 
 	/* 가위 바위 보 게임 시작 */
-	str_len = read(sock, message, BUFSIZE -1);
-	message[str_len] = 0;
+	/* 1. 서버의 메시지 수신 : 가위바위보를 입력하라는 메시지가 넘어올 것임. */
+	str_len = read(sock, message, BUFSIZE - 1);
+	message[str_len] = 0; /* string의 끝을 정함. */
 	fputs(message, stdout);
 	fflush(stdout);
 
+	/* 2. 클라이언트의 가위바위보 입력 받기 -> 서버에 전송 */
 	str_len = read(0, message, BUFSIZE); /* 클라이언트 선택 입력 */
 	write(sock, message, str_len); /* 클라이언트 선택을 서버에 전송 */
 
-	str_len = read(sock, message, BUFSIZE -1);
+	/* 3. 서버의 메시지 수신 : 가위바위보 결과가 넘어올 것임. */
+	str_len = read(sock, message, BUFSIZE - 1);
 	message[str_len] = 0;
 	puts(message);
 
@@ -60,6 +61,4 @@ int main(int argc, char ** argv)
 
 	return 0;
 }
-
-
 
