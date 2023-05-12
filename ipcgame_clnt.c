@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	/* 클라이언트는 소켓만 만들어주면 된다. 클라이언트의 주소정보는 시스템에거 자동으로 가져와서 사용함 */
 	sock = socket(PF_INET, SOCK_STREAM, 0);
 
 	memset(&serv_addr, 0, sizeof(serv_addr));
